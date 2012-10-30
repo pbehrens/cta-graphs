@@ -1,0 +1,82 @@
+
+
+<h3>Inputting ad Analyzing Data</h3>
+<p>One of the most common ways of <a href="http://cran.r-project.org/doc/manuals/R-data.html">importing data</a> into R is using a text file that is delimitated with some sort of character. There are also packages that allow you to input data from a database, or other formats. Once the data is imported as a data frame you can start creating models and graphs.</p>
+
+To go through the examples of this post you can download the data files from here.
+
+<h3>Reading CSV Files</h3>
+<p>
+To read in a CSV file as a data frame use the read.csv() function. This will return a data frame with the data from the file. If there is a header for the file then you can import that as well for the column labels. Otherwise
+<code>
+# read in data.csv
+# head=TRUE imports header values from the csv file and sets them to column names
+# set the seperator using the sep argument
+> babyData <- read.csv(file="babies.csv", head=TRUE, sep=",")
+> colnames(babyData)
+
+# print out the new datas columns
+> colnames(babyData)
+[1] "birth_weight" "gestation"    "parity"       "age"          "height"      
+[6] "weight"       "smoke"
+
+# if you want to change the column labels you can pass the colnames() function a vector of labels
+> colnames(babyData) <- c("Birth Weight", "Gestation", "Parity", "Age", "Height", "Weight", "Smoke")
+</code>
+</p>
+
+
+<p>
+The baby birth data set is pretty large so it's not the best to print out the entire data frame. There are a few functions that R provides that enable you to get a good idea of what the imported data looks like. Use can use head() and tail() to view the first and last 6 rows of the data frame.
+<code>
+# you can use head() to print out the first 6 entries in the data tail
+> head(babyData)
+  birth_weight gestation parity age height weight smoke
+1          120       284      0  27     62    100     0
+2          113       282      0  33     64    135     0
+3          128       279      0  28     64    115     1
+4          123        NA      0  36     69    190     0
+5          108       282      0  23     67    125     1
+6          136       286      0  25     62     93     0
+# tail returns the last 6
+> tail(babyData)
+
+
+
+
+# new column names
+> head(babyData)
+  Birth Weight Gestation Parity Age Height Weight Smoke
+1          120       284      0  27     62    100     0
+2          113       282      0  33     64    135     0
+3          128       279      0  28     64    115     1
+4          123        NA      0  36     69    190     0
+5          108       282      0  23     67    125     1
+6          136       286      0  25     62     93     0
+</code>
+</p>
+<p>
+
+<code>
+# print out a summary of the imported data
+> summary(babyData)
+  Birth Weight     Gestation         Parity            Age       
+ Min.   : 55.0   Min.   :148.0   Min.   :0.0000   Min.   :15.00  
+ 1st Qu.:108.8   1st Qu.:272.0   1st Qu.:0.0000   1st Qu.:23.00  
+ Median :120.0   Median :280.0   Median :0.0000   Median :26.00  
+ Mean   :119.6   Mean   :279.3   Mean   :0.2549   Mean   :27.26  
+ 3rd Qu.:131.0   3rd Qu.:288.0   3rd Qu.:1.0000   3rd Qu.:31.00  
+ Max.   :176.0   Max.   :353.0   Max.   :1.0000   Max.   :45.00  
+                 NA's   :13                       NA's   :2      
+     Height          Weight          Smoke       
+ Min.   :53.00   Min.   : 87.0   Min.   :0.0000  
+ 1st Qu.:62.00   1st Qu.:114.8   1st Qu.:0.0000  
+ Median :64.00   Median :125.0   Median :0.0000  
+ Mean   :64.05   Mean   :128.6   Mean   :0.3948  
+ 3rd Qu.:66.00   3rd Qu.:139.0   3rd Qu.:1.0000  
+ Max.   :72.00   Max.   :250.0   Max.   :1.0000  
+ NA's   :22      NA's   :36      NA's   :10
+</code>
+</p>
+
+
