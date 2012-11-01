@@ -15,8 +15,6 @@
 			<string></string>
 		</dict>
 		<dict>
-			<key>expanded</key>
-			<true/>
 			<key>name</key>
 			<string>comp_indstudy</string>
 			<key>regexFolderFilter</key>
@@ -105,6 +103,6 @@
 	<key>showFileHierarchyDrawer</key>
 	<true/>
 	<key>windowFrame</key>
-	<string>{{273, 76}, {852, 702}}</string>
+	<string>{{328, 27}, {852, 702}}</string>
 </dict>
 </plist>

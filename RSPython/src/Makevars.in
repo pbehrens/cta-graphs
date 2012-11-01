@@ -1,0 +1,15 @@
+PKG_CPPFLAGS= @DEBUG_INFO@ -I../inst/include -I@PYTHON_INCLUDE_DIR@ -D_R_=1 -DUSE_R=1
+
+# We can remove the -L$(R_HOME)/bin -lR for 1.3
+PKG_LIBS=-L@PYTHON_LIB_DIR@ @PYTHON_LIB@ -L${R_HOME}/lib @R_SHARED_LIBRARY@ @THREAD_LIBS@ 
+
+$(SHLIB):
+
+# @R_PACKAGE_DIR@/libs/RSInternal.so
+
+depends:
+	$(CC) -M $(PKG_CPPFLAGS) -I$(R_HOME)/include $(CFLAGS) $(shell ls *.c) > $@
+
+@R_PACKAGE_DIR@/libs/RSInternal.so:
+	echo "Creating RSInternal.so"
+	$(SHLIB_LINK) -o $@ $(OBJS) $(PKG_LIBS) -lR -L$(R_HOME)/bin $(ALL_LIBS)

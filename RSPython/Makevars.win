@@ -1,0 +1,6 @@
+include local.config
+
+PKG_CPPFLAGS= -I../inst/include -I${PYTHON_INCLUDE_DIR} -D_R_=1 -DUSE_R=1
+PKG_LIBS=-L${PYTHON_LIB_DIR} ${PYTHON_LIB} ${THREAD_LIB}
+
+${SHLIB}:

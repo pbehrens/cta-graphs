@@ -1,0 +1,2 @@
+( cd  /libs ; if test ! -s RSInternal.so ; then ln -s RSPython.so RSInternal.so ; fi )
+

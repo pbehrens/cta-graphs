@@ -1,0 +1,15 @@
+Package: RSPython
+Version: 0.7-1
+Date: 2006/10/31
+Author:  Duncan Temple Lang <duncan@wald.ucdavis.edu>
+Maintainer:  Duncan Temple Lang <duncan@wald.ucdavis.edu>
+Title: Interface between Python and S language
+Description: Allows Python programs to invoke S functions, methods, etc.
+     and S code to call Python functionality. This uses a general foreign
+     reference mechanism to avoid copying and translating object contents
+     and definitions.
+Depends: R (>= 1.3.0)
+Note: Python 1.5 or higher. This is released by the Omegahat Project for Statistical
+      Computing. Bug reports should be submitted via
+      http://www.omegahat.org/bugs or via email to the maintainer.
+License: BSD. 

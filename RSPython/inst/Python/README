@@ -1,0 +1,18 @@
+This directory contains Python code for communicating with S (i.e. R
+and SPlus). 
+
+RS:
+ The `RS' module contains Python code that the user calls to communicate 
+ with the R engine to invoke functions and methods, get objects, etc. 
+
+RSInternal:
+ The module `RSInternal' is C-level code that actually performs these 
+ calls. The routines this exports are not intended to be called directly. 
+
+RReference:
+ This provides the classes to represent an S object in Python as a
+ "foreign reference".
+
+
+See http://www.omegahat.org/RSPython for more details.
+

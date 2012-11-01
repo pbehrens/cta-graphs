@@ -1,27 +1,28 @@
-
-
-<h3>Inputting ad Analyzing Data</h3>
+<h3>Importing and Analyzing Data</h3>
 <p>One of the most common ways of <a href="http://cran.r-project.org/doc/manuals/R-data.html">importing data</a> into R is using a text file that is delimitated with some sort of character. There are also packages that allow you to input data from a database, or other formats. Once the data is imported as a data frame you can start creating models and graphs.</p>
 
-To go through the examples of this post you can download the data files from here.
+To go through the examples of this post you can download the data file about baby births.
+
+<a href='http://patrickbehrens.com/wp-content/uploads/2012/11/babies.txt'>babies.txt</a>
+
+The file is broken down into columns with a header given at the beginning of the file.
 
 <h3>Reading CSV Files</h3>
 <p>
-To read in a CSV file as a data frame use the read.csv() function. This will return a data frame with the data from the file. If there is a header for the file then you can import that as well for the column labels. Otherwise
+To read in a CSV file as a data frame use the read.csv() function. This will return a data frame with the data from the file. If there is a header for the file then you can import that as well for the column labels. R will try and convert the columns of the file into relevant datatypes. It will work most of the time for numbers, booleans, and  strings. To convert dates you will have to the date functions that R provides. You can read about the date functions <a href-"http://stat.ethz.ch/R-manual/R-patched/library/base/html/as.Date.html"> here</a>
 <code>
 # read in data.csv
 # head=TRUE imports header values from the csv file and sets them to column names
 # set the seperator using the sep argument
-> babyData <- read.csv(file="babies.csv", head=TRUE, sep=",")
-> colnames(babyData)
+> baby.data <- read.csv(file="data/babies.csv", head=TRUE, sep=" ")
 
 # print out the new datas columns
-> colnames(babyData)
+> colnames(baby.data)
 [1] "birth_weight" "gestation"    "parity"       "age"          "height"      
 [6] "weight"       "smoke"
 
 # if you want to change the column labels you can pass the colnames() function a vector of labels
-> colnames(babyData) <- c("Birth Weight", "Gestation", "Parity", "Age", "Height", "Weight", "Smoke")
+> colnames(baby.data) <- c("BirthWeight", "Gestation", "Parity", "Age", "Height", "Weight", "Smoke")
 </code>
 </p>
 
@@ -30,7 +31,7 @@ To read in a CSV file as a data frame use the read.csv() function. This will ret
 The baby birth data set is pretty large so it's not the best to print out the entire data frame. There are a few functions that R provides that enable you to get a good idea of what the imported data looks like. Use can use head() and tail() to view the first and last 6 rows of the data frame.
 <code>
 # you can use head() to print out the first 6 entries in the data tail
-> head(babyData)
+> head(baby.data)
   birth_weight gestation parity age height weight smoke
 1          120       284      0  27     62    100     0
 2          113       282      0  33     64    135     0
@@ -39,13 +40,10 @@ The baby birth data set is pretty large so it's not the best to print out the en
 5          108       282      0  23     67    125     1
 6          136       286      0  25     62     93     0
 # tail returns the last 6
-> tail(babyData)
-
-
-
+> tail(baby.data)
 
 # new column names
-> head(babyData)
+> head(baby.data)
   Birth Weight Gestation Parity Age Height Weight Smoke
 1          120       284      0  27     62    100     0
 2          113       282      0  33     64    135     0
@@ -53,13 +51,18 @@ The baby birth data set is pretty large so it's not the best to print out the en
 4          123        NA      0  36     69    190     0
 5          108       282      0  23     67    125     1
 6          136       286      0  25     62     93     0
+
+# you can also view one single column of the data frame by using the $ symbol. It will return a vector containing that column's data
+# this is good use to when formatting data
+> head(baby.data$Weight)
 </code>
 </p>
 <p>
+The summary() function gives you some details about the information in a data frame. The minimum, 1st quartile, median, mean 3rd quartile, and maximum. It also gives you information about how many null values (NA's) there are. You can then use the na.omit() function to omit the null values from the data frame, so there isn't any bad data left that can cause bugs later on.
 
 <code>
 # print out a summary of the imported data
-> summary(babyData)
+> summary(baby.data)
   Birth Weight     Gestation         Parity            Age       
  Min.   : 55.0   Min.   :148.0   Min.   :0.0000   Min.   :15.00  
  1st Qu.:108.8   1st Qu.:272.0   1st Qu.:0.0000   1st Qu.:23.00  
@@ -76,7 +79,65 @@ The baby birth data set is pretty large so it's not the best to print out the en
  3rd Qu.:66.00   3rd Qu.:139.0   3rd Qu.:1.0000  
  Max.   :72.00   Max.   :250.0   Max.   :1.0000  
  NA's   :22      NA's   :36      NA's   :10
+# str will print out the data type for each column in the data frame
+# It looks like there are some null so we'll use na.omit() to remove them
+> str(baby.data)
+'data.frame':	1174 obs. of  7 variables:
+ $ BirthWeight: int  120 113 128 108 136 138 132 120 143 140 ...
+ $ Gestation  : int  284 282 279 282 286 244 245 289 299 351 ...
+ $ Parity     : int  0 0 0 0 0 0 0 0 0 0 ...
+ $ Age        : int  27 33 28 23 25 33 23 25 30 27 ...
+ $ Height     : int  62 64 64 67 62 62 65 62 66 68 ...
+ $ Weight     : int  100 135 115 125 93 178 140 125 136 120 ...
+ $ Smoke      : int  0 0 1 1 0 0 0 0 1 0 ...
+ - attr(*, "na.action")=Class 'omit'  Named int [1:62] 4 40 43 86 90 94 99 103 111 114 ...
+  .. ..- attr(*, "names")= chr [1:62] "4" "40" "43" "86" ...
+> baby.data <- na.omit(baby.data) 
 </code>
+Because this data set is reletively large taking out a few rows because of null values is fine and shouldn't affect results we might try to get from the data.
 </p>
 
+<h3>Graphing </h3>
 
+ Now that you have some data points loaded into R you can start to to create graphs of the data and see if there are any visible trends that you can find. In the last tutorial you should have installed the ggplot2 package for plotting data. ggplot2 extends R's graphing functions and allows for graphs to be made layer by layer. It also has better control over the visual aspects of the graphs. ggplot2 creates graphs by layers represented by R functions.
+
+The example below starts off with a ggplot() object with the aesthetics x and y being set to columns in the baby.data data frame . Next, geom_point() creates a scatter plot of the data with the color being represented by the Smoke column in the baby data frame. That means the color of each point will be colored depending on on the Smoke column. The theme is set to black and white with theme_bw(), then scale_color_manual() defines the darkblue color and removes the legend from the data. xlab() and ylab() set the labels for the plot and opts() sets the title.  ggsave() saves the file as a pdf to a directory of your choice.
+<code>
+# start off with a ggplot() objhect then add on the other layers to build the graph
+baby.plot<-ggplot(baby.data, aes(x=BirthWeight,y=Gestation,))+
+geom_point(aes(colour=Smoke))+ 
+theme_bw()+
+ylab("Gestation Period In Days")+
+xlab("Birth Weight in Ounces")+
+opts(title="Baby Weight Compared to Gestation Period")+
+# fit a line using a linear model (lm)
+stat_smooth(method="lm")
+ggsave(plot=baby.plot, filename="./graphs/babies.pdf",width=8,height=9)
+
+</code>
+
+
+
+To create separate graphs for the baby data based on the parity of their birth you can use the 
+facet_wrap() function to break down the data into multiple graphs based on the value of a third column in the data frame.
+<code>
+baby.plot<-ggplot(baby.data, aes(x=BirthWeight,y=Gestation,))+
+geom_point(aes(colour=Smoke))+ 
+theme_bw()+
+facet_wrap(~Parity, nrow = 6, ncol = 1) + 
+ylab("Gestation Period In Days")+
+xlab("Birth Weight in Ounces")+
+opts(title="Baby Weight Compared to Gestation Period")+
+# fit a line using a linear model (lm)
+stat_smooth(method="lm")
+ggsave(plot=baby.plot, filename="./graphs/babies-by-parity.pdf",width=8,height=9)
+</code>
+
+
+Graphs made with ggplot2 can be customized in almost any way to fit the type of graph. The docs can be found at the bottom of the page. In the next section of the tutorial I will go over graphing a bit more and take on some simple regressions and clustering.
+
+<h3>Helpful Links</h3>
+<a href="http://cran.r-project.org/doc/manuals/R-data.html">Importing Data in R</a>
+<a href="http://cran.r-project.org/web/packages/RPostgreSQL/index.html">PostgreSQL interface for R scripts </a> 
+<a href="http://docs.ggplot2.org/current/">ggplot2 Documentation</a>
+<a href="http://wiki.stdout.org/rcookbook/Graphs/Colors%20(ggplot2)/">R Cook Book: Graphing</a>

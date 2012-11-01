@@ -1,0 +1,18 @@
+R_HOME=
+export R_HOME
+ 
+if test -z "${PYTHONPATH}" ; then
+  PYTHONPATH=/libs:/Python
+else
+  PYTHONPATH=${PYTHONPATH}:/libs:/Python
+fi
+
+export PYTHONPATH
+ 
+if test -z "${LD_LIBRARY_PATH}" ; then
+  LD_LIBRARY_PATH=/bin
+else
+  LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:/bin
+fi
+
+export LD_LIBRARY_PATH

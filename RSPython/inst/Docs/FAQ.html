@@ -1,0 +1,194 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html> <head>
+<title>S-Python FAQ</title>
+</head>
+
+<body>
+<h1>The S-Python Interface FAQ</h1>
+
+<dl>
+
+  <dt>
+  <li> When I try to load the RS module in Python,
+       I get an error about the symbol <code>R_GlobalEnv</code>
+       not being found.
+
+  <dd>
+
+      The problem is that you did not compile R as a shared library
+       (i.e. create $R_HOME/bin/libR.so).
+       This means that you cannot run R within Python.
+       The reason this is not an error when building the package
+        is that you can still run Python within R!
+      <p>
+      To build the shared library, you will need to compile
+      R from scratch and configure it with the
+       <code>--enable-R-shlib</code> flag.
+      
+  <dt>
+  <li> When I try to load the RSPython library into R
+      I get an error
+      about <code>pthread_sigmask</code>, e.g.
+<pre>      
+Error in dyn.load(x, as.logical(local), as.logical(now)) : 
+	unable to load shared library "/tmp/R/pkg/RSPython/libs/RSPython.so":
+  /tmp/R/pkg/RSPython/libs/RSPython.so: undefined symbol: pthread_sigmask
+Error in library(RSPython) : .First.lib failed
+</pre>      
+      
+  <dd> This means that your version of Python has been compiled
+      with the pthreads library and so to must the RSPython package.
+      To enable this, use the --with-threads
+      argument to configure when installing RSPython.
+      Typically, this is done as
+<pre>
+ R CMD INSTALL -c --configure-args='--with-threads' RSPython
+</pre>      
+
+  <dt>
+  <li> When I load the RSPython library into R, I get
+      an error about a missing symbol <code>openpty</code>, e.g.
+<pre>
+> library(RSPython)
+Error in dyn.load(x, as.logical(local), as.logical(now)) : 
+	unable to load shared library "/tmp/R/pkg/RSPython/libs/RSPython.so":
+  /tmp/R/pkg/RSPython/libs/RSPython.so: undefined symbol: openpty
+Error in library(RSPython) : .First.lib failed      
+</pre>      
+  <dd>
+      This means that the RSPython library needs to be linked against
+       libutil.so, usually in /usr/lib.
+      Until the configuration for the package is fixed to take care of this automatically,
+      add <code>-lutil</code> to the end of the PKG_LIBS variable
+      setting
+      in src/Makevars.in and
+      re-install the package.
+      
+  <dt>
+  <li> When I import the RS module, I get an error about
+       a symbol <i>R_GlobalEnv</i>.
+  <dd> Well, the probable answer is that R is trying
+      to load the library <code>R_X11.so</code>
+      and that is failing. (It attempts to find symbols
+       in R, but the way that R is loaded into Python means
+       it cannot find them! It is a dynamic loading issue.)
+       <br>
+      The way around this is to return to the R installation and
+      link R_X11.so against <code>libR.so</code>.
+      Currently, the simplest thing to do is edit the
+       file src/unix/X11/Makefile and specifically the
+<code>$(SHLIB)</code> rule.
+       All you need to do is add -L$(R_HOME)/bin -lR
+      in the link command.
+ So, it should look like
+<pre>
+$(SHLIB): $(OBJECTS)
+        $(SHLIB_LD) $(SHLIB_LDFLAGS) $(LDFLAGS) -o $@ $(OBJECTS) -L$(R_HOME)/bin -lR $(ALL_LIBS)
+</pre>       
+Then invoking make in that directory should create the
+ <code>R_X11</code> shared library
+      (<code>R_X11.so</code> many systems)
+      in <code>$R_HOME/bin</code>.
+<br>
+      We might find a convenient way to specify this during
+      the R installation procedure.
+
+
+  <dt>
+  <li> When I issue the <pre>import RS</pre> command
+       to load R, I get the error
+<pre>
+>>> import RS;
+Traceback (innermost last):
+   File "<stdin>", line 1, in ?
+ImportError: libR.so: cannot open shared object file: No such file or directory      
+</pre>      
+  <dd> This means that you haven't got the value of the
+     <code>LD_LIBRARY_PATH</code> environment variable
+      set correctly when you run python.
+      You can do this with
+<pre>
+ setenv LD_LIBRARY_PATH $R_HOME/bin       #csh and tcsh
+ export LD_LIBRARY_PATH=$R_HOME/bin       # bash
+</pre>
+       and the run python.
+<p>
+  Note that you cannot set the value of LD_LIBRARY_PATH
+  from within python and have it take effect.
+  That is
+<pre>
+% python
+>>> from os import environ
+>>> environ['LD_LIBRARY_PATH'] = environ['R_HOME']+ "/bin"
+>>> import RS
+</pre>      
+will <i>not</i> work.
+<br>
+This is because the facility that does dynamic loading
+reads the value of LD_LIBRARY_PATH very early
+in the initialization of any application.
+And it never reads it again.
+  <dt>
+  <li> How do I get graphics displays (e.g. the X11 device) to appear?
+  <dd>
+       If you have <code>R_X11.so</code> compiled as in the question
+      above (i.e. linking against <code>libR.so</code>),
+       it should be as simple as
+<pre>
+       RS.call("plot", [1,2,3])
+</pre>            
+
+
+
+  <dt>
+  <li> When I issue the <pre>import RS</pre> command
+       to load R, I get the error
+<pre>
+>>> import RS
+Fatal error: R home directory is not defined
+</pre>      
+  <dd> This means that the R engine cannot find where all the R code
+      is located that it needs to run itself, i.e. package base, etc.
+      You need to tell it where to find this using the environment
+      variable R_HOME. Set this to output of the command
+<pre>
+       R RHOME
+</pre>
+      before importing the RS module.
+      
+  <dt>
+  <li> <font class="question">When I attempt to call R from within a
+      Python session or script, the call
+<pre>
+    import RS
+</pre>      
+     gives an error message
+<pre>
+ImportError: No module named RS
+</pre>      
+</font>
+  <dd><font class="answer">
+The problem is that you have not set the value of the
+environment variable <code>PYTHONPATH</code> correctly.
+This variable must include the fully qualified directories <code>Python/</code>
+and <code>libs/</code> of the directory into which  the
+R package was installed.
+<p/>      
+Also, take  a look at the return value from
+<pre>
+import sys      
+sys.path
+</pre>
+The latest version now tries to set this automatically for you.
+See <code>.PythonPath()</code>.
+      </font>
+
+</dl>
+
+
+<hr>
+<address></address>
+<!-- hhmts start -->
+Last modified: Wed Jun 11 12:02:27 EDT 2003
+<!-- hhmts end -->
+</body> </html>
