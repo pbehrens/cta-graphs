@@ -1,3 +1,0 @@
-% setenv PYTHONPATH ./PySrc:./tests
-% python
-import RS
