@@ -23,7 +23,7 @@ con <- dbConnect(drv, dbname="cta")
 trips <- dbGetQuery(con,"select * from trips_trip")
 
 # import the redline stops 
-redline <- read.csv(file="data/redline.csv", head=FALSE, sep=",")
+redline <- read.csv(file="../data/redline.csv", head=FALSE, sep=",")
 # set column names to something different than what was from the db dump
 colnames(trips) <- c("id", "station_id","stop_id", "station_name","stop_desc","run_number",
 "route_id","destination_id","destination_name","route_direction_code", "prediction_generated",

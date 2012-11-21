@@ -1,0 +1,124 @@
+Now that you have some data imported into R and understand some of the basic features for summarizes and viewing that data, you can start to dig into some of the features that make R truly standout as a programming language for statistics. The nature of the babies data makes it an excellent choice for utilizing some of the regression features that R offers.
+
+<h3>Basic with Regression</h3>
+The main goals of regression analysis  
+-Predicting 
+Predicting housing prices using characteristics of houses
+-Assessing the effect of a variable on other variables
+Asses impact of on an industry due to raw material price increases
+- Give a description to a set of data
+
+When using a linear regression the number one assumption is that the data will some how follow a linear relationship between the input variables/predictors (x) and the response (y). If there are more than one predictor then it is a multivariate regression, otherwise is is merely a simple regression. The response variable must be continuous, but all of the other predictors can be discrete, continuous, or categorical. You may have had to plot a fitted line on a scatter plot at some point in your elementary education, as a way to predict the value of something given that the line goes through the majority of the points plotted.Simple drawing a line by eye is good enough for most day to day things, but if you want accuracy in your predictions and the ability to do it with more complex models some math is going to be used. The general form of a regression line is 
+
+y = 00 + 01x1 + 02x2 + 03x3 +03x4
+
+
+00 represents the y-intercept of the line and 01 the slope. 
+
+For simple data it isn't that hard to just draw a line where it appears to be the best, but for accurate predictions you'll want to turn towards some math. Now if there are more variables you wanted to keep track of, the equation would get much larger and complex. 
+
+To fit a line to a collection of points, most linear models will try and minimize the sum and the least squares of the models residuals. Residuals are the points that are either above or below the line and they can be seen as a way to measure the accuracy of a linear regression being made. If there sums are too big that the line is no being fit very well. Or if the sum is enormous, it may mean that the data isn't right for linear regression. 
+
+For now I will go over how to make a simple one variable regression in R, using the babies.txt data and then afterwards an other model using all  of the provided data.
+
+If you have moved away from the initial R prompt here is a script with all of the code we went through in the past post.
+
+You can load it into R by running the while R is running in the same directory as the source file.
+>source("Babies.R")
+
+All of the variables should be loaded into the interpreter.
+
+<h3>Creating Linear Models</h3>
+
+R makes it easy to create linear models for data sets.
+
+First lets see what the data we have looks like
+<code>
+> head(baby.data)
+  BirthWeight Gestation Parity Age Height Weight Smoke
+1         120       284      0  27     62    100     0
+2         113       282      0  33     64    135     0
+3         128       279      0  28     64    115     1
+5         108       282      0  23     67    125     1
+6         136       286      0  25     62     93     0
+7         138       244      0  33     62    178     0
+
+</code>
+
+
+First we will have ti split up the baby.data data frame from the previous post into a training and test set of data.
+
+<code>
+# input data frame and seed for random value to split up data frame
+splitdf <- function(dataframe, seed=NULL) {
+    if (!is.null(seed)) set.seed(seed)
+	#take index from 1 to the length of the data frame
+    index <- 1:nrow(dataframe)
+	#find training set index
+    trainindex <- sample(index, trunc(length(index)/2))
+	# assign training and test set
+    trainset <- dataframe[trainindex, ]
+    testset <- dataframe[-trainindex, ]
+    list(trainset=trainset,testset=testset)
+}
+
+two.sets <- splitdf(baby.data, seed=NULL)
+
+train.data <- two.sets$trainset
+test.data <- two.sets$testset
+</code>
+
+Making a linear model for birth weight and gestation period would be interesting. We'll need to the lm() fcuntion that R provides to do that.
+<code>
+# create a linear model to predict birthweight given the gestation period
+# arguments are first variable to predict values for then a ~ to denote the variables being used to predict,
+# then set data= to the baby.data from earlier
+> baby.model <- lm(formula = BirthWeight ~ Gestation, data = train.data)
+
+Coefficients:
+        (Intercept)  baby.data$Gestation  
+           -10.7541               0.4666  
+
+# summary of the regression create
+# coefficients give an estimation on 00 
+# to view coefficiants 
+> coefficients(baby.model)
+# summary info about the new model
+> summary(baby.model)
+
+lm(formula = BirthWeight ~ Gestation, data = baby.data)
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-49.348 -11.065   0.218  10.101  57.704 
+
+Coefficients:
+             Estimate Std. Error t value Pr(>|t|)    
+(Intercept) -10.75414    8.53693   -1.26    0.208    
+Gestation     0.46656    0.03054   15.28   <2e-16 ***
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1 
+
+Residual standard error: 16.74 on 1172 degrees of freedom
+Multiple R-squared: 0.1661,	Adjusted R-squared: 0.1654 
+F-statistic: 233.4 on 1 and 1172 DF,  p-value: < 2.2e-16
+
+# to display the coefficients used in the model create
+> coefficients(baby.model)
+(Intercept)   Gestation 
+-10.7541389   0.4665569
+</code>
+
+To see how fit the data is to the linear model you can find the root mean squared error. You do this by taking the sum of all the residual values( data points above or bellow the regression line), then taking it's square root.
+<code>
+# find the root mean squared error to see the sample standard deviation
+rmsError <- sqrt(sum(baby.model$residuals * baby.model$residuals)/length(baby.model$residuals))
+
+print("rmsError = ")
+rmsError
+
+# the RMS error is around 16 so this means on average the prediction will be off by around 16 ounces of the birth weight, which doesnt seem too good
+
+</code>
+
+

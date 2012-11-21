@@ -1,0 +1,174 @@
+R is a programming language and environment for doing computations that involve statistics. The language offers a wide variety of tools that making statistical computations easy to do and takes out much of the boiler-plate code needed to implement various statistical models. It has better support for object orientated programming techniques. There are also strong tools for visualizing data built into R as well as a vast amount of community made packages that extend R's functionality. I'm going to begin by going over some of the basic features of R and the syntax for some common statistical tasks.
+
+To begin you will need to get an installation of R running on your computer. Most installations come bundled with a GUI editor that highlights R syntax, but most things I will go over can be done using the interactive prompt.
+
+One great feature of R is the ability to quickly install packages created by the community from the command line. R's Comprehensive R Archive Network (CRAN) hosts a wide array of packages that extend the functionality of R. You can find a list of available packages<a href="http://cran.r-project.org/web/packages/">here</a>.  Installing a package is a simple one line command. Later on in this series, we will be plotting graphs of data using an extension of R's graphing features called  <a href="http://ggplot2.org/">ggplot2</a>. It simplifies some of the steps required for graphing data and allows you to make complex layered graphs. To install the package run
+<code>
+> install.packages(“ggplot2”)
+
+</code>
+then select a mirror.
+
+R has a good deal of documentation available on the internet as well as a few free books on learning the basics. You can find them  <a href="http://www.r-project.org/other-docs.html">here</a> An other helpful feature that R provides the ability to look up documentation on the command line. To look at the documentation on the install.packages() function prepend a ? to the function name and the documentation will be shown. You can also search through the help files for certain terms by using help.search().
+
+<code>
+> ?install.packages
+> help.search("install.packages")
+</code>
+
+
+<h3>Basics in R</h3>
+<h4>Data Types</h4>
+R provides a nice selection of data types made for use in statistical computations.
+<h4>Numbers</h4>
+In R you can assign numeric values that consist of any real number to a variable. An arrow pointing to the left (<-) is used to assign a value to variable. There is no need to declare the datatype of a variable before assigning it a value.
+
+<code>
+# assign numbers to two variables
+> t <- 45
+> u <- 45.543543
+# from the interpreter you can print out a variable by typing in the variable name
+# print out t and u
+> t
+[1] 45
+> u
+[1] 45.54354
+</code>
+
+<h4>Strings</h4>
+Define a string using single or double quotes.
+
+<code>
+> y <- "hello world"
+> y
+[1] "hello world"
+</code>
+
+<h4>Factors</h4>
+Factors contain values of categorical data that can't be interpreted as a number. Storing data as a factor makes sure R interprets certain data correctly when creating statistical models. They are an efficient way to store strings, because their values can be stored once in memory and then referenced by a numeric value. More about factors will come up when you start analyzing data.
+
+<h4>Vectors</h4>
+There are three types of vectors in R
+-numerical
+-character
+-logical
+
+They are defined using c().You can refer to an element of a vector using it's index value, a vector of index values, or a range of index values.
+
+<code>
+> x <- c(54,43,43,76,21,32)
+> y <- c("one", "two", "three", "four")
+> z <- c(TRUE, FALSE, TRUE, TRUE, FALSE, FALSE, TRUE)
+
+> x(c(2,5))
+# 2nd and 5th index
+[1] 43 21
+> z[2:5]
+#index 2 through 5
+[1] FALSE  TRUE  TRUE FALSE
+
+</code>
+
+<h4>Matrices</h4>
+<a href="http://stat.ethz.ch/R-manual/R-devel/library/base/html/matrix.html">Matrices</a> are a large part of computing statistical data in R especially when dealing with regressions and other computations on tabular data. Create a matrix using the matrix() function. Each column in the matrix must be of the same mode type of mode(numeric, character, logical).
+
+<code>
+#create an 8 x8 matrix of numbers of numbers from 1 to 64
+> x <-matrix(1:64, nrow=8, ncol=4)
+
+# create a 4x4 matrix with the columns and rows labels
+# byrow=TRUE makes sure the matrix is filled by columns instead of rows
+# dimnames is set to a list of of two vectors that will be set as the row and column labels
+
+> y <-matrix(1:16, nrow=2, ncol=2,byrow=TRUE, dimnames=list(c("a", "b"), c("1", "2")))
+
+</code>
+
+<h4>Lists</h4>
+Create a list using the list() function. In R lists are like associative arrays with key value pairs. The default key values are integer index values, but they can also be set to strings. Lists can contain any data type and can have mixed types as well.
+
+<code>
+> a <- c("one", "two", "three", "four")
+> b <- "Hello World"
+> c <- matrix(1:64, nrow=8, ncol=4)
+# create list with variables of mixed data types
+> thelist <- list(avector=a, astring=b, amatrix=c)
+</code>
+
+
+<h4>Data Frames</h4>
+<a href="http://stat.ethz.ch/R-manual/R-devel/library/base/html/data.frame.html">Data frames</a> are very similar to matrices except the columns of a data frame can have different modes. You can create a data frame by combining multiple vectors of the same length. They can later on be turned into plots and other visualizations. Create one using the data.frame()  function. YOu can also uses the names() function to set column labels. 
+
+<code>
+>x <- c(1,2,3,4)
+>y <- c("one", "two", "three", "four")
+>z <- c(TRUE,FALSE,FALSE,FALSE)
+>thedata <- data.frame(x,y,z)
+# set the column names of the data frame by passing names() a vector of labels
+>names(thedata) <- c("integers","strings","logical") # variable names
+
+  integers strings logical
+1        1     one    TRUE
+2        2     two   FALSE
+3        3   three   FALSE
+4        4    four   FALSE
+</code>
+
+
+
+<h3>Inputting Data</h3>
+One of the most common ways of <a href="http://cran.r-project.org/doc/manuals/R-data.html">importing data</a> into R is using a text file that is delimitated with some sort of character. There are also packages that allow you to input data from a database, or other formats. To read in a comma separated values file use the read.csv() function. Lets try and load one of the data sets I've included.
+
+<code>
+# read in data.csv
+# head=TRUE imports header values from the csv file and sets them to column names
+# set the seperator using the sep argument
+
+>thedata <- read.csv(file="age_income.csv", head=TRUE, sep=",")
+
+# print out the new data
+>thedata
+   Age Income
+1   10      0
+2   25  35000
+3   43  75000
+4   32  55000
+5   70  25000
+6   19  20000
+7    5      0
+8   21  20000
+9   35  60000
+10  24  30000
+11  12      0
+12  14  10000
+13  49  35000
+14  62  80000
+15  48  80000
+16  40      0
+17  33      0
+18  67  55000
+19   9      0
+20  28 100000
+
+# print out a summary of the imported data
+
+>summary(thedata)
+
+     Age            Income      
+Min.   : 5.00   Min.   :     0  
+1st Qu.:17.75   1st Qu.:     0  
+Median :30.00   Median : 27500  
+Mean   :32.30   Mean   : 34000  
+3rd Qu.:44.25   3rd Qu.: 56250  
+Max.   :70.00   Max.   :100000
+
+
+</code>
+
+
+
+
+
+
+
+

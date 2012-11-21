@@ -39,7 +39,7 @@ timeseriesgraph <- function(stopid, trips){
 		ylab("Predicted Arrival")+
 		opts(title=combined.name)
 
-		ggsave(plot=stop.plot, filename=paste("./graphs/time_series_graphs/", combined.name,".pdf"),width=30,height=20)
+		ggsave(plot=stop.plot, filename=paste("../graphs/time_series_graphs/", combined.name,".pdf"),width=30,height=20)
 	}
 }
 
@@ -50,7 +50,7 @@ trips <- na.omit(dbGetQuery(con,"select * from trips_trip where degree='0'"))
 # trips <- na.omit(dbGetQuery(con,"select * from trips_trip where stop_id_id ='30106'"))
 
 # import the redline stops 
-redline <- na.omit(read.csv(file="data/redline.csv", head=FALSE, sep=","))
+redline <- na.omit(read.csv(file="../data/redline.csv", head=FALSE, sep=","))
 # set column names to something different than what was from the db dump
 colnames(trips) <- c("id", "station_id","stop_id", "station_name","stop_desc","run_number",
 "route_id","destination_id","destination_name","route_direction_code", "prediction_generated",

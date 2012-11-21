@@ -19,9 +19,9 @@ averagetime <- function(stopid, trips){
 
 
 # import trip data stored from the cta api
-trips <- read.csv(file="data/trips.csv", head=TRUE, sep=",")
+trips <- read.csv(file="../data/trips.csv", head=TRUE, sep=",")
 # import the redline stops 
-redline <- read.csv(file="data/redline.csv", head=FALSE, sep=",")
+redline <- read.csv(file="../data/redline.csv", head=FALSE, sep=",")
 # set column names to something different than what was from the db dump
 colnames(trips) <- c("id", "station_id","stop_id", "station_name","stop_desc","run_number",
 "route_id","destination_id","destination_name","route_direction_code", "prediction_generated",

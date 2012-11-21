@@ -1,0 +1,4 @@
+sudo ettercap -d  -T -w /Users/thebeagle/capture/cap2myaddress.pcap   -i en1  -M  arp:remote /192.168.1.1/ /192.168.1.142/ 
+
+
+sudo ettercap -i en1 -T  --proto tcp -f " port 80"

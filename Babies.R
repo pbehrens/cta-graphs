@@ -1,7 +1,5 @@
 #load in ggplot 2 library in order to make grpahs later on
 library(ggplot2)
-
-
 # read in data.csv
 # head=TRUE imports header values from the csv file and sets them to column names
 # set the seperator using the sep argument
@@ -10,17 +8,15 @@ baby.data <- read.csv(file="data/babies.txt", head=TRUE, sep=" ")
 # print out the new data's columns
 colnames(baby.data)
 
+
 # if you want to change the column labels you can pass the colnames() function a vector of labels
 colnames(baby.data) <- c("BirthWeight", "Gestation", "Parity", "Age", "Height", "Weight", "Smoke")
 
-# you can use head() to print out the first 6 entries in the data tail
+# new column names
 head(baby.data)
 
 # tail returns the last 6
 tail(baby.data)
-
-# new column names
-head(baby.data)
 
 
 # you can also view one single column of the data frame by using the $ symbol. It will return a vector containing that column's data
@@ -58,7 +54,6 @@ ggsave(plot=baby.plot, filename="./graphs/babies/babies-smoking.pdf",width=8,hei
 
 
 
-sp + facet_grid(. ~ sex, labeller=mf_labeller)
 baby.plot<-ggplot(baby.data, aes(x=BirthWeight,y=Gestation,))+
 geom_point(aes(colour=Smoke))+
 theme_bw()+
